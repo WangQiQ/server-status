@@ -2,7 +2,6 @@ import { SwitchTransition, CSSTransition } from "react-transition-group";
 import { formatNumber, formatDuration } from "@/utils/timeTools";
 import { LinkTwo } from "@icon-park/react";
 import { Tooltip, Button, Result } from "antd";
-import CustomLink from "@/components/customLink";
 
 const SiteStatus = ({ siteData, days, status }) => {
   return (
@@ -20,7 +19,6 @@ const SiteStatus = ({ siteData, days, status }) => {
                 >
                   <div className="meta">
                     <div className="name">{site.name}</div>
-                    <CustomLink iconDom={<LinkTwo />} to={site.url} />
                     <div
                       className={`status ${
                         site.status === "ok" ? "normal" : "error"
