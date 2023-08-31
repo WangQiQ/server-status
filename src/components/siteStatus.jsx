@@ -1,14 +1,32 @@
+import { useState } from "react";
 import { SwitchTransition, CSSTransition } from "react-transition-group";
 import { formatNumber, formatDuration } from "@/utils/timeTools";
 import { LinkTwo } from "@icon-park/react";
-import { Tooltip, Button, Result } from "antd";
+import { Tooltip, Button, Result, Modal } from "antd";
+import SiteCharts from "@/components/siteCharts";
 
 const SiteStatus = ({ siteData, days, status }) => {
+  // 弹窗数据
+  const [siteDetailsShow, setSiteDetailsShow] = useState(false);
+  const [siteDetailsData, setSiteDetailsData] = useState(null);
+
+  // 开启弹窗
+  const showSiteDetails = (data) => {
+    setSiteDetailsShow(true);
+    setSiteDetailsData(data);
+  };
+
+  // 关闭弹窗
+  const closeSiteDetails = () => {
+    setSiteDetailsShow(false);
+    setSiteDetailsData(null);
+  };
+
   return (
     <SwitchTransition mode="out-in">
-      <CSSTransition key={status.siteState} classNames="fade" timeout={500}>
+      <CSSTransition key={status.siteState} classNames="fade" timeout={100}>
         {status.siteState !== "wrong" ? (
-          siteData ? (
+          status.siteState !== "loading" && siteData ? (
             <div className="sites">
               {siteData.map((site) => (
                 <div
@@ -16,6 +34,9 @@ const SiteStatus = ({ siteData, days, status }) => {
                   className={`site ${
                     site.status !== "ok" ? "error" : "normal"
                   }`}
+                  onClick={() => {
+                    showSiteDetails(site);
+                  }}
                 >
                   <div className="meta">
                     <div className="name">{site.name}</div>
@@ -86,9 +107,20 @@ const SiteStatus = ({ siteData, days, status }) => {
                   </div>
                 </div>
               ))}
+              {/* 站点详情 */}
+              <Modal
+                title={siteDetailsData?.name}
+                open={siteDetailsShow}
+                footer={null}
+                onOk={closeSiteDetails}
+                onCancel={closeSiteDetails}
+                bodyStyle={{ marginTop: "20px" }}
+              >
+                <SiteCharts siteDetails={siteDetailsData} />
+              </Modal>
             </div>
           ) : (
-            <div className="loading"></div>
+            <div className="loading" />
           )
         ) : (
           <Result
